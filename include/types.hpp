@@ -7,4 +7,6 @@
 
 //definicja aliasu ElementID - do 8 grudnia
 
+using ElementID = int;
+
 #endif //SYMULACJASIECIZPO_TYPES_HPP
