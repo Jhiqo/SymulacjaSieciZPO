@@ -1,0 +1,8 @@
+//
+// Created by julia on 30.11.2023.
+//
+
+#ifndef SYMULACJASIECIZPO_NODES_HPP
+#define SYMULACJASIECIZPO_NODES_HPP
+
+#endif //SYMULACJASIECIZPO_NODES_HPP

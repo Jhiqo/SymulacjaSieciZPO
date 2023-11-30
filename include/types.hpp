@@ -1,0 +1,8 @@
+//
+// Created by julia on 30.11.2023.
+//
+
+#ifndef SYMULACJASIECIZPO_TYPES_HPP
+#define SYMULACJASIECIZPO_TYPES_HPP
+
+#endif //SYMULACJASIECIZPO_TYPES_HPP
