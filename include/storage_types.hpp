@@ -5,7 +5,9 @@
 #ifndef SYMULACJASIECIZPO_STORAGE_TYPES_HPP
 #define SYMULACJASIECIZPO_STORAGE_TYPES_HPP
 
-//definicje klas IPackageStockpile, IPackageQueue i PackageQueue
+#include <cstdio>
+
+// definicje klas IPackageStockpile, IPackageQueue i PackageQueue
 // oraz typu wyliczeniowego PackageQueueType - do 8 grudnia
 
 enum class PackageQueueType{
@@ -20,7 +22,7 @@ public:
     // kontenera przechowującego półprodukty
     // (tj. metody [c]begin(), [c]end() – łącznie 4 metody)
 
-    int size() const;
+    std::size_t size() const;
     bool empty();
     virtual ~IPackageStockpile() = 0;
 };
