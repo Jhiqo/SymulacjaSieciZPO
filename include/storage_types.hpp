@@ -7,7 +7,7 @@
 
 #include <cstdio>
 
-// definicje klas IPackageStockpile, IPackageQueue i PackageQueue
+// definicje klas IPackageStockpile (done), IPackageQueue i PackageQueue
 // oraz typu wyliczeniowego PackageQueueType - do 8 grudnia
 
 enum class PackageQueueType{
@@ -16,18 +16,21 @@ enum class PackageQueueType{
 
 class IPackageStockpile{
 public:
-    void push();
+    using const_iterator = std::list<Package>::const_iterator;
 
-    // tu metody pozwalające na uzyskanie dostępu “tylko do odczytu” do
-    // kontenera przechowującego półprodukty
-    // (tj. metody [c]begin(), [c]end() – łącznie 4 metody)
+    virtual void push(Package&& package) = 0;
 
-    std::size_t size() const;
-    bool empty();
-    virtual ~IPackageStockpile() = 0;
+    virtual const_iterator begin() const = 0;
+    virtual const_iterator cbegin() const = 0;
+    virtual const_iterator end() const = 0;
+    virtual const_iterator cend() const = 0;
+
+    virtual std::size_t size() const = 0;
+    virtual bool empty() = 0;
+    virtual ~IPackageStockpile() = default;
 };
 
-class IPackageQueue{
+class IPackageQueue : public IPackageStockpile{
     throw;
 };
 
