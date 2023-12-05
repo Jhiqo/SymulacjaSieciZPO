@@ -5,7 +5,9 @@
 #ifndef SYMULACJASIECIZPO_STORAGE_TYPES_HPP
 #define SYMULACJASIECIZPO_STORAGE_TYPES_HPP
 
-#include <cstdio>
+#include "package.hpp"
+
+#include <list>
 
 // definicje klas IPackageStockpile (done), IPackageQueue i PackageQueue
 // oraz typu wyliczeniowego PackageQueueType - do 8 grudnia
