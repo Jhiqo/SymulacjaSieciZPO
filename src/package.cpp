@@ -4,21 +4,22 @@
 
 #include "package.hpp"
 
-static std::set<ElementID> assigned_IDs = {};
-static std::set<ElementID> freed_IDs = {};
+std::set<ElementID> Package::assigned_IDs {0};
+std::set<ElementID> Package::freed_IDs;
 
 Package::Package(){
-    if (assigned_IDs.empty() && freed_IDs.empty()){
-        id_ = 1;
+    ElementID new_id;
+
+    if(!freed_IDs.empty()){
+        new_id = *freed_IDs.begin();
+        freed_IDs.erase(new_id);
     }
-    else if (!freed_IDs.empty()){
-        id_ = *freed_IDs.begin();
-        freed_IDs.erase(*freed_IDs.begin());
+    else{
+        new_id = *std::prev(assigned_IDs.end()) + 1;
     }
-    else if (!assigned_IDs.empty()){
-        id_ = *assigned_IDs.end() + 1;
-    }
-    assigned_IDs.insert(id_);
+
+    assigned_IDs.insert(new_id);
+    id_ = new_id;
 }
 
 Package &Package::operator=(Package &&package) noexcept{
@@ -34,5 +35,5 @@ Package &Package::operator=(Package &&package) noexcept{
 
 Package::~Package(){
     assigned_IDs.erase(id_);
-    freed_IDs.insert(id_)
+    freed_IDs.insert(id_);
 }
