@@ -7,12 +7,12 @@ include_directories(include)
 
 set(SOURCE_FILES
         #src/factory.cpp
-        #src/helpers.cpp
-        #src/nodes.cpp
+        src/helpers.cpp
+        src/nodes.cpp
         src/package.cpp
         #src/reports.cpp
         #src/simulation.cpp
-        #src/storage_types.cpp
+        src/storage_types.cpp
         )
 
 add_executable(
@@ -31,7 +31,7 @@ set(SOURCES_FILES_TESTS
                     test/test_package.cpp
         #            test/test_reports.cpp
         #            test/test_simulate.cpp
-        #            test/test_storage_types.cpp
+                    test/test_storage_types.cpp
         )
 
 set(EXEC_TEST ${PROJECT_ID}__test)
