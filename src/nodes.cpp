@@ -43,3 +43,44 @@ void Ramp::deliver_goods(Time t) {
             push_package(Package());
         }
     }
+}
+
+void ReceiverPreferences::add_receiver(IPackageReceiver *r){
+    double first_num_of_receivers = double(preferences_.size());
+    if (first_num_of_receivers == 0){
+        preferences_[r] = 1.0;
+    }
+    else{
+        for(auto &receiver : preferences_){
+            receiver.second = 1/(first_num_of_receivers + 1);
+        }
+        preferences_[r] = 1/(first_num_of_receivers + 1);
+    }
+}
+
+void ReceiverPreferences::remove_receiver(IPackageReceiver *r) {
+    double first_num_of_receivers = double(preferences_.size());
+    if (first_num_of_receivers > 1){
+        for (auto &receiver : preferences_){
+            receiver.second = 1/(first_num_of_receivers - 1);
+        }
+    }
+    preferences_.erase(r);
+}
+
+IPackageReceiver *ReceiverPreferences::choose_receiver() {
+    auto p = pg_();
+    if (p >= 0 && p <= 1){
+        double D = 0.0;
+        for (auto &receiver : preferences_){
+            D += receiver.second();
+            if (D < 0 || D > 1) {
+                return nullptr;
+            }
+            if (p <= D) {
+                return receiver.first;
+            }
+        }
+    }
+    return nullptr;
+}
