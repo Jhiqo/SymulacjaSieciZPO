@@ -2,7 +2,7 @@
 // Created by julia on 30.11.2023.
 //
 
-=======
+
 #include "nodes.hpp"
 
 void Worker::do_work(Time t) {
@@ -73,7 +73,7 @@ IPackageReceiver *ReceiverPreferences::choose_receiver() {
     if (p >= 0 && p <= 1){
         double D = 0.0;
         for (auto &receiver : preferences_){
-            D += receiver.second();
+            D += receiver.second;
             if (D < 0 || D > 1) {
                 return nullptr;
             }

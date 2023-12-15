@@ -1,17 +1,17 @@
-//
-// Created by julia on 30.11.2023.
-//
+
 
 #ifndef SYMULACJASIECIZPO_NODES_HPP
 #define SYMULACJASIECIZPO_NODES_HPP
 
-=======
+
 #include <memory>
 #include <optional>
+#include <map>
 
 #include "types.hpp"
 #include "package.hpp"
 #include "storage_types.hpp"
+#include "helpers.hpp"
 
 //definicje klas IPackageReceiver(done), Storehouse, ReceiverPreferences, PackageSender, Ramp i Worker(done) - do 15 grudnia
 
@@ -33,31 +33,12 @@ protected:
     static inline ReceiverType receiver_type_;
 };
 
-class Worker : public IPackageReceiver, public PackageSender{
-    Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> q) : id_(id), pd_(pd), q_(std::move(q)), pst_(0) {};
-    void do_work(Time t);
-    TimeOffset get_processing_duration() const {return pd_};
-    Time get_package_processing_start_time() const {return pst_;};
-    void receive_package(Package&& p) override;
-    ElementID get_id() const override {return id_;}
-    IPackageStockpile::const_iterator cbegin() const override { return q_->cbegin(); }
-    IPackageStockpile::const_iterator cend() const override { return q_->cend(); }
-    IPackageStockpile::const_iterator begin() const override { return q_->begin(); }
-    IPackageStockpile::const_iterator end() const override { return q_->end(); }
-private:
-    ElementID id_;
-    TimeOffset pd_;
-    std::unique_ptr<IPackageQueue> q_;
-    Time pst_;
-    static inline ReceiverType receiver_type_ = ReceiverType::Worker;
-};
-
 class ReceiverPreferences {
 public:
     using preferences_t = std::map<IPackageReceiver *, double>;
     using const_iterator = preferences_t::const_iterator;
 
-    explicit ReceiverPreferences(ProbabilityGenerator pg = probability_generator) : pg_(std::move(pg) {}
+    explicit ReceiverPreferences(ProbabilityGenerator pg = probability_generator) : pg_(std::move(pg)) {}
 
     const_iterator cbegin() const { return preferences_.cbegin(); }
     const_iterator cend() const { return preferences_.cend(); }
@@ -74,7 +55,7 @@ private:
     ProbabilityGenerator pg_;
     preferences_t preferences_;
 };
-  
+
 class PackageSender {
 public:
     ReceiverPreferences receiver_preferences_;
@@ -89,6 +70,30 @@ protected:
 private:
     std::optional<Package> bufor_ = std::nullopt;
 };
+
+
+class Worker : public IPackageReceiver, public PackageSender{
+public:
+    Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> q) : id_(id), pd_(pd), q_(std::move(q)), pst_(0) {};
+    void do_work(Time t);
+    TimeOffset get_processing_duration() const {return pd_;};
+    Time get_package_processing_start_time() const {return pst_;};
+    void receive_package(Package&& p) override;
+    ElementID get_id() const override {return id_;}
+    IPackageStockpile::const_iterator cbegin() const override { return q_->cbegin(); }
+    IPackageStockpile::const_iterator cend() const override { return q_->cend(); }
+    IPackageStockpile::const_iterator begin() const override { return q_->begin(); }
+    IPackageStockpile::const_iterator end() const override { return q_->end(); }
+private:
+    ElementID id_;
+    TimeOffset pd_;
+    std::unique_ptr<IPackageQueue> q_;
+    Time pst_;
+    static inline ReceiverType receiver_type_ = ReceiverType::Worker;
+};
+
+  
+
 
 class Ramp : public PackageSender {
 public:
