@@ -51,6 +51,29 @@ private:
     Time pst_;
     static inline ReceiverType receiver_type_ = ReceiverType::Worker;
 };
+
+class ReceiverPreferences {
+public:
+    using preferences_t = std::map<IPackageReceiver *, double>;
+    using const_iterator = preferences_t::const_iterator;
+
+    explicit ReceiverPreferences(ProbabilityGenerator pg = probability_generator) : pg_(std::move(pg) {}
+
+    const_iterator cbegin() const { return preferences_.cbegin(); }
+    const_iterator cend() const { return preferences_.cend(); }
+    const_iterator begin() const { return preferences_.cbegin(); }
+    const_iterator end() const { return preferences_.cend(); }
+
+    void add_receiver(IPackageReceiver *r);
+    void remove_receiver(IPackageReceiver *r);
+
+    IPackageReceiver *choose_receiver();
+
+    const preferences_t &get_preferences() const { return preferences_; }
+private:
+    ProbabilityGenerator pg_;
+    preferences_t preferences_;
+};
   
 class PackageSender {
 public:
@@ -79,7 +102,24 @@ private:
     TimeOffset di_;
     Time t_;
     std::optional<Package> bufor_ = std::nullopt;
-}
+};
+
+class Storehouse : public IPackageReceiver{
+public:
+    Storehouse(ElementID id, std::unique_ptr<IPackageStockpile> d = std::make_unique<PackageQueue>(PackageQueueType::FIFO)) : id_(id), d_(std::move(d)) {}
+
+    ElementID get_id() const override { return id_; }
+    void receive_package(Package &&p) override { d_->push(std::move(p)); }
+
+    IPackageStockpile::const_iterator cbegin() const override { return d_->cbegin(); }
+    IPackageStockpile::const_iterator cend() const override { return d_->cend(); }
+    IPackageStockpile::const_iterator begin() const override { return d_->begin(); }
+    IPackageStockpile::const_iterator end() const override { return d_->end(); }
+
+private:
+    ElementID id_;
+    std::unique_ptr<IPackageStockpile> d_;
+};
  
 
 #endif //SYMULACJASIECIZPO_NODES_HPP
