@@ -75,7 +75,7 @@ bool Factory::is_consistent() {
     for (Ramp &ramp : ramp_){
         const PackageSender *ramp_ptr = &ramp;
         colour[ramp_ptr] = NodeColour::UNVISITED;
-    }
+
 
 
     try {
@@ -83,7 +83,7 @@ bool Factory::is_consistent() {
     }
     catch (std::logic_error &err) {
         return false;
-    }
+    }}
     return true;
 }
 
