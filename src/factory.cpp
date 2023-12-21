@@ -27,7 +27,7 @@ void Factory::remove_receiver(NodeCollection<Node>& collection, ElementID id) {
     }
 }
 
-bool has_reachable_storehouse(const PackageSender* sender, std::map<const PackageSender*, NodeColour>& node_colours){
+bool Factory::has_reachable_storehouse(const PackageSender* sender, std::map<const PackageSender*, NodeColour>& node_colours){
     if(node_colours[sender] == NodeColour::VERIFIED){return true;}
     node_colours[sender] = NodeColour::VISITED;
 
@@ -119,15 +119,3 @@ void Factory::remove_storehouse(ElementID id) {
     storehouse_.remove_by_id(id);
 }
 
-template <class Node>
-void Factory::remove_receiver(NodeCollection<Node>& collection, ElementID id) {
-    auto ptr = dynamic_cast<IPackageReceiver*>(&(*collection.find_by_id(id)));
-    for (Worker& sender : worker_) {
-        sender.receiver_preferences_.remove_receiver(ptr);
-    }
-    if (std::is_same<Node, Worker>::value) {
-        for (Ramp& sender : ramp_) {
-            sender.receiver_preferences_.remove_receiver(ptr);
-        }
-    }
-}
