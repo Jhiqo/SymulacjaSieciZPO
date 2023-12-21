@@ -49,7 +49,7 @@ public:
     const_iterator end() const override {return queue_.cend();}
     const_iterator cend() const override {return queue_.cend();}
 
-    void push(Package&& package) override {queue_.emplace_back(std::move(package));}
+    void push(Package&& package) override {queue_.push_back(std::move(package));}
     std::size_t size() const override {return queue_.size();}
     bool empty() const override {return queue_.empty();}
     Package pop() override;
