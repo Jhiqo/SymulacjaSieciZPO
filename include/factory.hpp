@@ -84,6 +84,10 @@ std::pair<std::string, std::string> parse_type(std::string line);
 
 Factory load_factory_structure(std::istream& is);
 
+std::list<std::pair<std::string, std::string>> make_pairs_r(const Ramp& sender);
+
+std::list<std::pair<std::string, std::string>> make_pairs_w(const Worker& sender);
+
 void save_factory_structure(Factory& factory, std::ostream& os);
 
 #endif //SYMULACJASIECIZPO_FACTORY_HPP
