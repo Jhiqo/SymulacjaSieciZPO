@@ -2,6 +2,8 @@
 #include <istream>
 #include <string>
 #include <sstream>
+#include <algorithm>
+
 
 
 template<class Node>
@@ -162,69 +164,69 @@ std::pair<std::string, std::string> parse_type(std::string line){
     return kid;
 }
 
-Factory load_factory_structure(std::istream& is){
-    Factory f;
+Factory load_factory_structure(std::istream& is) {
+
+    Factory factory;
     std::string line;
-    while (std::getline(is, line)){
-        if(line[0] == ';' || line.size() == 0){
+    while (std::getline(is, line)) {
+        if (line[0] == ';' || line.size() == 0) {
             continue;
         }
-        ParsedLineData el = parse_line(line);
-        if(el.type == RAMP){
-            ElementID id = std::stoi((*el.map.find("id")).second);
-            TimeOffset l = static_cast<TimeOffset>(std::stoi((*el.map.find("delivery-interval")).second));
-            f.add_ramp(Ramp(id,l));
+        ParsedLineData elem = parse_line(line);
+        if (elem.type == RAMP) {
+            ElementID id = std::stoi((*elem.map.find("id")).second);
+            TimeOffset di = static_cast<TimeOffset>(std::stoi((*elem.map.find("delivery-interval")).second));
+            factory.add_ramp(Ramp(id, di));
         }
-        else if (el.type == WORKER){
-            ElementID id = std::stoi((*el.map.find("id")).second);
-            TimeOffset l = static_cast<TimeOffset>(std::stoi((*el.map.find("processing-time")).second));
+        if (elem.type == WORKER) {
+            ElementID id = std::stoi((*elem.map.find("id")).second);
+            TimeOffset pt = static_cast<TimeOffset>(std::stoi((*elem.map.find("processing-time")).second));
             PackageQueueType type;
-            if((*el.map.find("queue-type")).second == "LIFO"){
+            if ((*elem.map.find("queue-type")).second == "LIFO") {
                 type = PackageQueueType::LIFO;
             }
-            }
-            if((*el.map.find("queue-type")).second == "FIFO"){
+            if ((*elem.map.find("queue-type")).second == "FIFO") {
                 type = PackageQueueType::FIFO;
             }
 
             std::unique_ptr<PackageQueue> q = std::make_unique<PackageQueue>(PackageQueue(type));
-            f.add_worker(Worker(id,l,std::move(q)));
+            factory.add_worker(Worker(id, pt, std::move(q)));
         }
-        else if (el.type == STOREHOUSE){
-            ElementID id = std::stoi((*el.map.find("id")).second);
-            f.add_storehouse(Storehouse(id));
+        if (elem.type == STOREHOUSE) {
+            ElementID id = std::stoi((*elem.map.find("id")).second);
+            factory.add_storehouse(Storehouse(id));
         }
-        else if(el.type == LINK){
-            std::pair<std::string, std::string> type_id_sender = parse_type((*el.map.find("src")).second);
-            std::pair<std::string, std::string> type_id_receiver = parse_type((*el.map.find("dest")).second);
-            if(type_id_sender.first == "ramp" && type_id_receiver.first == "store") {
+        if (elem.type == LINK) {
+            std::pair<std::string, std::string> type_id_sender = parse_type((*elem.map.find("src")).second);
+            std::pair<std::string, std::string> type_id_receiver = parse_type((*elem.map.find("dest")).second);
+            if (type_id_sender.first == "ramp" && type_id_receiver.first == "store") {
                 ElementID id_sender = std::stoi(type_id_sender.second);
                 ElementID id_receiver = std::stoi(type_id_receiver.second);
-                Storehouse& receiver = *(f.find_storehouse_by_id(id_receiver));
-                f.find_ramp_by_id(id_sender)->receiver_preferences_.add_receiver(&receiver);
+                Storehouse& receiver = *(factory.find_storehouse_by_id(id_receiver));
+                factory.find_ramp_by_id(id_sender)->receiver_preferences_.add_receiver(&receiver);
             }
-            else if(type_id_sender.first == "ramp" && type_id_receiver.first == "worker") {
+            if (type_id_sender.first == "ramp" && type_id_receiver.first == "worker") {
                 ElementID id_sender = std::stoi(type_id_sender.second);
                 ElementID id_receiver = std::stoi(type_id_receiver.second);
-                Worker& receiver = *(f.find_worker_by_id(id_receiver));
-                f.find_ramp_by_id(id_sender)->receiver_preferences_.add_receiver(&receiver);
+                Worker& receiver = *(factory.find_worker_by_id(id_receiver));
+                factory.find_ramp_by_id(id_sender)->receiver_preferences_.add_receiver(&receiver);
             }
-            else if(type_id_sender.first == "worker" && type_id_receiver.first == "worker") {
+            if (type_id_sender.first == "worker" && type_id_receiver.first == "worker") {
                 ElementID id_sender = std::stoi(type_id_sender.second);
                 ElementID id_receiver = std::stoi(type_id_receiver.second);
-                Worker& receiver = *(f.find_worker_by_id(id_receiver));
-                f.find_worker_by_id(id_sender)->receiver_preferences_.add_receiver(&receiver);
+                Worker& receiver = *(factory.find_worker_by_id(id_receiver));
+                factory.find_worker_by_id(id_sender)->receiver_preferences_.add_receiver(&receiver);
             }
-            else if(type_id_sender.first == "worker" && type_id_receiver.first == "store") {
+            if (type_id_sender.first == "worker" && type_id_receiver.first == "store") {
                 ElementID id_sender = std::stoi(type_id_sender.second);
                 ElementID id_receiver = std::stoi(type_id_receiver.second);
-                Storehouse& receiver = *(f.find_storehouse_by_id(id_receiver));
-                f.find_worker_by_id(id_sender)->receiver_preferences_.add_receiver(&receiver);
+                Storehouse& receiver = *(factory.find_storehouse_by_id(id_receiver));
+                factory.find_worker_by_id(id_sender)->receiver_preferences_.add_receiver(&receiver);
             }
         }
 
     }
-    return f;
+    return factory;
 }
 
 std::list<std::pair<std::string, std::string>> make_pairs_r(const Ramp& sender){

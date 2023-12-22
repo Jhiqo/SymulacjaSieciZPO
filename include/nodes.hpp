@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <memory>
-#include <optional>
+#include "optional"
 #include <map>
 
 #include "types.hpp"
@@ -81,6 +81,7 @@ public:
     TimeOffset get_processing_duration() const {return pd_;};
     Time get_package_processing_start_time() const {return pst_;};
     void receive_package(Package&& p) override;
+    IPackageQueue* get_queue(void) const { return q_.get(); }
     ElementID get_id() const override {return id_;}
     ReceiverType get_receiver_type() const override { return ReceiverType::Worker; }
     IPackageStockpile::const_iterator cbegin() const override { return q_->cbegin(); }
