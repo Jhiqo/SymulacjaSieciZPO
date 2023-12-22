@@ -227,3 +227,99 @@ Factory load_factory_structure(std::istream& is){
     return f;
 }
 
+std::list<std::pair<std::string, std::string>> make_pairs_r(const Ramp& sender){
+    std::list<std::pair<std::string, std::string>> paired;
+
+    std::string sender_type = "ramp";
+
+    std::string sender_id = std::to_string(sender.get_id());
+
+    std::string sender_string = sender_type + "-" + sender_id;
+
+    std::map<IPackageReceiver*, double> receiver_list = sender.receiver_preferences_.get_preferences();
+    for(auto& receiver : receiver_list) {
+        ReceiverType type = receiver.first->get_receiver_type();
+        std::string receiver_type;
+
+        if (type == ReceiverType::Worker) {
+            receiver_type = "worker";
+        } else {
+            receiver_type = "store";
+        }
+        std::string receiver_id = std::to_string(receiver.first->get_id());
+
+        std::string receiver_string = receiver_type + "-" + receiver_id;
+
+        std::pair<std::string, std::string> pair = std::make_pair(sender_string, receiver_string);
+        paired.insert(paired.end(), pair);
+    }
+
+    return paired;
+}
+
+std::list<std::pair<std::string, std::string>> make_pairs_w(const Worker& sender){
+    std::list<std::pair<std::string, std::string>> paired;
+
+    std::string sender_type = "worker";
+
+    std::string sender_id = std::to_string(sender.get_id());
+
+    std::string sender_string = sender_type + "-" + sender_id;
+
+    std::map<IPackageReceiver*, double> receiver_list = sender.receiver_preferences_.get_preferences();
+    for(auto& receiver : receiver_list) {
+        ReceiverType type = receiver.first->get_receiver_type();
+        std::string receiver_type;
+
+        if (type == ReceiverType::Worker) {
+            receiver_type = "worker";
+        } else {
+            receiver_type = "store";
+        }
+        std::string receiver_id = std::to_string(receiver.first->get_id());
+
+        std::string receiver_string = receiver_type + "-" + receiver_id;
+
+        std::pair<std::string, std::string> pair = std::make_pair(sender_string, receiver_string);
+        paired.insert(paired.end(), pair);
+    }
+
+    return paired;
+}
+
+void save_factory_structure(Factory& factory, std::ostream& os){
+    os << "; == LOADING RAMPS ==" << std::endl;
+    os.put(os.widen('\n'));
+
+    for(auto i = factory.ramp_cbegin(); i != factory.ramp_cend();i++){
+        os << "LOADING_RAMP id=" << (*i).get_id() << " delivery-interval=" << (*i).get_delivery_interval() << "\n";
+    }
+    os << "; == WORKERS ==\n\n" << std::endl;
+    for(auto i = factory.worker_cbegin(); i != factory.worker_cend();i++){
+        std::string type;
+        if ((*i).get_queue()->get_queue_type() == PackageQueueType::FIFO) {
+            type = "FIFO";
+        } else if ((*i).get_queue()->get_queue_type() == PackageQueueType::LIFO) {
+            type = "LIFO";
+        }
+        os << "WORKER id=" << (*i).get_id() << " processing-time=" << (*i).get_processing_duration() << " queue-type=" << type << "\n";
+    }
+    os << "; == STOREHOUSES ==\n\n" << std::endl;
+    for(auto i = factory.storehouse_cbegin(); i != factory.storehouse_cend();i++){
+        os << "STOREHOUSE id=" << (*i).get_id() << "\n";
+    }
+    os << "; == LINKS ==\n\n" << std::endl;
+
+    std::list<std::pair<std::string, std::string>> links;
+    for (auto i = factory.ramp_cbegin(); i != factory.ramp_cend();i++) {
+        links.merge(make_pairs_r(*i));
+    }
+
+    for (auto i = factory.worker_cbegin(); i != factory.worker_cend();i++) {
+        links.merge(make_pairs_w(*i));
+    }
+
+    for(auto i = links.cbegin(); i != links.cend(); i++){
+        os << "LINK src=" << (*i).first << " dest=" << (*i).second <<"\n";
+    }
+}
