@@ -73,4 +73,17 @@ private:
     bool has_reachable_storehouse(const PackageSender* sender, std::map<const PackageSender*, NodeColour> &node_colours);
 };
 
+struct ParsedLineData
+{
+    ElementType type;
+    std::map<std::string,std::string> map;
+};
+
+ParsedLineData parse_line(std::string line);
+std::pair<std::string, std::string> parse_type(std::string line);
+
+Factory load_factory_structure(std::istream& is);
+
+void save_factory_structure(Factory& factory, std::ostream& os);
+
 #endif //SYMULACJASIECIZPO_FACTORY_HPP
