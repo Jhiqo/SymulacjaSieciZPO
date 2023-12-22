@@ -4,6 +4,7 @@
 #include "types.hpp"
 #include "nodes.hpp"
 #include <vector>
+#include <istream>
 #include <stdexcept>
 #include <string>
 #include <algorithm>
