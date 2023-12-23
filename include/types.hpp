@@ -10,9 +10,9 @@
 //definicja aliasu ElementID - do 8 grudnia (done)
 //definicja aliasów Time, TimeOffset i ProbabilityGenerator - do 15 grudnia (done)
 
-using ElementID = unsigned int;
-using Time = int;
-using TimeOffset = int;
+using ElementID = int;
+using Time = unsigned int;
+using TimeOffset = unsigned int;
 using ProbabilityGenerator = std::function<double()>;
 
 #endif //SYMULACJASIECIZPO_TYPES_HPP
