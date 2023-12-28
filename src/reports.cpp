@@ -3,6 +3,8 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
+#include <vector>
 
 void generate_structure_report(const Factory& f, std::ostream& os){
     os<<"\n== LOADING RAMPS ==\n\n";
@@ -27,13 +29,16 @@ void generate_structure_report(const Factory& f, std::ostream& os){
         os<<"  Queue type: "<<queue_type<<"\n";
         os<<"  Receivers:\n";
 
+
         for(auto receiver_preference : it->receiver_preferences_){
             ReceiverType type = receiver_preference.first->get_receiver_type();
             if(type == ReceiverType::Worker)
-                os<<"    worker #"<<receiver_preference.first->get_id()<<"\n";
+                os << "    worker #" << receiver_preference.first->get_id() << "\n";
             else
-                os<<"    storehouse #"<<receiver_preference.first->get_id()<<"\n";
+                os << "    storehouse #" << receiver_preference.first->get_id() << "\n";
         }
+
+
         os<<"\n";
     }
 
@@ -48,4 +53,14 @@ void generate_structure_report(const Factory& f, std::ostream& os){
 void generate_simulation_turn_report(const Factory& f, std::ostream& os, Time t){
     os << "\n=== [ Turn: "<<t<<" ] ===\n";
 
+    for(auto i = f.ramp_cbegin(); i != f.ramp_cend(); i++){
+        os << "LOADING RAMP #" << (*i).get_id() << "\n";
+        os << "  Delivery interval: " << (*i).get_delivery_interval() << "\n";
+        os << "  Receivers:\n";
+
+        for(auto receiver_preference : i->receiver_preferences_){
+            os << "    worker #" << receiver_preference.first->get_id() << "\n";
+        }
+        os << "\n";
+    }
 }
