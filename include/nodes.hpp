@@ -88,6 +88,8 @@ public:
     IPackageStockpile::const_iterator cend() const override { return q_->cend(); }
     IPackageStockpile::const_iterator begin() const override { return q_->begin(); }
     IPackageStockpile::const_iterator end() const override { return q_->end(); }
+
+    std::optional<Package>& get_processing_buffer() {return bufor_;}
 private:
     ElementID id_;
     TimeOffset pd_;

@@ -41,22 +41,22 @@ public:
     void remove_ramp(ElementID id){ramp_.remove_by_id((id));};
     NodeCollection<Ramp>::iterator find_ramp_by_id(ElementID id){return ramp_.find_by_id((id));};
     NodeCollection<Ramp>::const_iterator find_ramp_by_id(ElementID id) const {return ramp_.find_by_id((id));};
-    NodeCollection<Ramp>::const_iterator ramp_cbegin() {return ramp_.cbegin();};
-    NodeCollection<Ramp>::const_iterator ramp_cend() {return ramp_.cend();};
+    NodeCollection<Ramp>::const_iterator ramp_cbegin() const {return ramp_.cbegin();};
+    NodeCollection<Ramp>::const_iterator ramp_cend() const {return ramp_.cend();};
     //Worker
     void add_worker(Worker&& w){worker_.add_node(std::move(w));};
     void remove_worker(ElementID id);
     NodeCollection<Worker>::iterator find_worker_by_id(ElementID id){return worker_.find_by_id((id));};
     NodeCollection<Worker>::const_iterator find_worker_by_id(ElementID id) const {return worker_.find_by_id((id));};
-    NodeCollection<Worker>::const_iterator worker_cbegin() {return worker_.cbegin();};
-    NodeCollection<Worker>::const_iterator worker_cend() {return worker_.cend();};
+    NodeCollection<Worker>::const_iterator worker_cbegin() const {return worker_.cbegin();};
+    NodeCollection<Worker>::const_iterator worker_cend() const {return worker_.cend();};
     //Storehouse
     void add_storehouse(Storehouse&& s){storehouse_.add_node(std::move(s));};
     void remove_storehouse(ElementID id);
     NodeCollection<Storehouse>::iterator find_storehouse_by_id(ElementID id){return storehouse_.find_by_id((id));};
     NodeCollection<Storehouse>::const_iterator find_storehouse_by_id(ElementID id) const {return storehouse_.find_by_id((id));};
-    NodeCollection<Storehouse>::const_iterator storehouse_cbegin() {return storehouse_.cbegin();};
-    NodeCollection<Storehouse>::const_iterator storehouse_cend() {return storehouse_.cend();};
+    NodeCollection<Storehouse>::const_iterator storehouse_cbegin() const {return storehouse_.cbegin();};
+    NodeCollection<Storehouse>::const_iterator storehouse_cend() const {return storehouse_.cend();};
 
     bool is_consistent();
     void do_delivery(Time t);
