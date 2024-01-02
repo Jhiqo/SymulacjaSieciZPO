@@ -11,7 +11,7 @@
 
 class IntervalReportNotifier {
 public:
-	IntervalReportNotifier(TimeOffset to) = default;
+	IntervalReportNotifier(TimeOffset to) : to_(to) {}
 	bool should_generate_report(Time t);
 private:
 	TimeOffset to_;
@@ -19,7 +19,7 @@ private:
 
 class SpecificTurnsReportNotifier {
 public:
-	SpecificTurnsReportNotifier(std::set<Time> turns) = default;
+	SpecificTurnsReportNotifier(std::set<Time> turns) : turns_(turns) {}
 	bool should_generate_report(Time t);
 private:
 	std::set<Time> turns_;

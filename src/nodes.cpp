@@ -9,12 +9,14 @@ void Worker::do_work(Time t) {
     if (pst_ == 0){
         if (!q_->empty()){
             pst_ = t;
+            pbufor_.emplace(q_->pop());
         } else {
             return;
         }
     }
     if (t - (pst_ + pd_ - 1) == 0){ // jesli praca skonczona
-        push_package(std::move(q_->pop()));
+        push_package(std::move(pbufor_.value()));
+        pbufor_.reset();
         pst_ = 0;
     }
 }

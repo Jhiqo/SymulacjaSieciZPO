@@ -64,13 +64,13 @@ void generate_structure_report(const Factory& f, std::ostream& os){
 void generate_simulation_turn_report(const Factory& f, std::ostream& os, Time t){
     os << "=== [ Turn: "<<t<<" ] ===\n\n";
 
-    os << "== WORKERS ==\n\n";
+    os << "== WORKERS ==\n";
 
     for(auto it = f.worker_cbegin(); it != f.worker_cend(); it++){
 
-        os<<"WORKER #"<<(*it).get_id()<<"\n";
+        os<<"\nWORKER #"<<(*it).get_id()<<"\n";
         os<<"  PBuffer: ";
-        if ((*it).get_processing_buffer().has_value() == false)
+        if (!(*it).get_processing_buffer().has_value())
         {
             os<<"(empty)";
         }
@@ -80,22 +80,22 @@ void generate_simulation_turn_report(const Factory& f, std::ostream& os, Time t)
         }
         os<<"\n";
         os<<"  Queue: ";
-        auto el = (*it).cbegin();
-        if(el == (*it).cend()){
-            os<<"(empty)"
+        auto el = (*it).get_queue()->cbegin();
+        if(el == (*it).get_queue()->cend()){
+            os<<"(empty)";
         }
         else
         {
             os<<"#"<<(*el).get_id();
             el++;
-            while(el != (*it).cend()){
+            while(el != (*it).get_queue()->cend()){
                 os<<", #"<<(*el).get_id();
                 el++;
             }
         }
         os<<"\n";
         os<<"  SBuffer: ";
-        if ((*it).get_sending_buffer() == false){
+        if (!(*it).get_sending_buffer().has_value()){
             os<<"(empty)";
         }
         else
@@ -106,13 +106,13 @@ void generate_simulation_turn_report(const Factory& f, std::ostream& os, Time t)
     }
     os<<"\n";
 
-    os<<"== STOREHOUSES ==\n\n";
+    os<<"\n== STOREHOUSES ==\n\n";
     for (auto it = f.storehouse_cbegin(); it != f.storehouse_cend(); it++){
         os<<"STOREHOUSE #"<<(*it).get_id()<<"\n";
         os<<"  Stock: ";
         auto el = (*it).cbegin();
         if(el == (*it).cend()){
-            os<<"(empty)"
+            os<<"(empty)";
         }
         else
         {
@@ -122,7 +122,8 @@ void generate_simulation_turn_report(const Factory& f, std::ostream& os, Time t)
                 os<<", #"<<(*el).get_id();
                 el++;
             }
+
         }
-        os<<"\n";
+        os<<"\n\n";
     }
 }
