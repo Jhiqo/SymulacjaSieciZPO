@@ -6,16 +6,16 @@
 #include "reports.hpp"
 #include <stdexcept>
 
-SpecificTurnsReportNotifier::should_generate_report(Time t) {
+bool SpecificTurnsReportNotifier::should_generate_report(Time t) {
 	return turns_.find(t) != turns_.end();
 }
 
-IntervalReportNotifier::should_generate_report(Time t) {
+bool IntervalReportNotifier::should_generate_report(Time t) {
 	return (t - 1) % to_ == 0;
 }
 
 void simulate(Factory& f, TimeOffset d, std::function<void(Factory&, Time)> r) {
-	if (!f.isconsistent()) {
+	if (!f.is_consistent()) {
 		throw std::logic_error("Inconsistent graph");
 	}
 

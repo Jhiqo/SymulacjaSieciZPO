@@ -22,24 +22,35 @@ void generate_structure_report(const Factory& f, std::ostream& os){
     os<<"\n== WORKERS ==\n\n";
 
     for(auto it = f.worker_cbegin(); it != f.worker_cend(); it++){
-        std::string queue_type = (*it).get_queue()->get_queue_type() == PackageQueueType::LIFO ? "LIFO" : "FIFO";
+        std::string queue_type = (*it).get_queue()->get_queue_type() == PackageQueueType::FIFO ? "FIFO" : "LIFO";
 
-        os<<"WORKER #"<<(*it).get_id()<<"\n";
-        os<<"  Processing time: "<<(*it).get_processing_duration()<<"\n";
-        os<<"  Queue type: "<<queue_type<<"\n";
-        os<<"  Receivers:\n";
+        os << "WORKER #" << (*it).get_id() << "\n";
+        os << "  Processing time: " << (*it).get_processing_duration() << "\n";
+        os << "  Queue type: " << queue_type << "\n";
+        os << "  Receivers:\n";
 
+        std::vector<ElementID> receivers_workers;
+        std::vector<ElementID> receivers_storehouses;
 
-        for(auto receiver_preference : it->receiver_preferences_){
+        for(auto receiver_preference : (*it).receiver_preferences_){
             ReceiverType type = receiver_preference.first->get_receiver_type();
+
             if(type == ReceiverType::Worker)
-                os << "    worker #" << receiver_preference.first->get_id() << "\n";
+                receivers_workers.push_back(receiver_preference.first->get_id());
             else
-                os << "    storehouse #" << receiver_preference.first->get_id() << "\n";
+                receivers_storehouses.push_back(receiver_preference.first->get_id());
         }
 
+        std::sort(receivers_workers.begin(), receivers_workers.end());
+        std::sort(receivers_storehouses.begin(), receivers_storehouses.end());
 
-        os<<"\n";
+        for(auto receiver_worker : receivers_workers)
+            os << "    worker #" << receiver_worker << "\n";
+
+        for(auto receiver_storehouse : receivers_storehouses)
+            os << "    storehouse #" << receiver_storehouse << "\n";
+
+        os << "\n";
     }
 
     os<<"\n== STOREHOUSES ==\n";
