@@ -51,16 +51,67 @@ void generate_structure_report(const Factory& f, std::ostream& os){
 }
 
 void generate_simulation_turn_report(const Factory& f, std::ostream& os, Time t){
-    os << "\n=== [ Turn: "<<t<<" ] ===\n";
+    os << "=== [ Turn: "<<t<<" ] ===\n\n";
 
-    for(auto i = f.ramp_cbegin(); i != f.ramp_cend(); i++){
-        os << "LOADING RAMP #" << (*i).get_id() << "\n";
-        os << "  Delivery interval: " << (*i).get_delivery_interval() << "\n";
-        os << "  Receivers:\n";
+    os << "== WORKERS ==\n\n";
 
-        for(auto receiver_preference : i->receiver_preferences_){
-            os << "    worker #" << receiver_preference.first->get_id() << "\n";
+    for(auto it = f.worker_cbegin(); it != f.worker_cend(); it++){
+
+        os<<"WORKER #"<<(*it).get_id()<<"\n";
+        os<<"  PBuffer: ";
+        if ((*it).get_processing_buffer().has_value() == false)
+        {
+            os<<"(empty)";
         }
-        os << "\n";
+        else
+        {
+            os<<"#"<<(*(*it).get_processing_buffer()).get_id()<<" (pt = "<<t - (*it).get_package_processing_start_time() + 1<<")";
+        }
+        os<<"\n";
+        os<<"  Queue: ";
+        auto el = (*it).cbegin();
+        if(el == (*it).cend()){
+            os<<"(empty)"
+        }
+        else
+        {
+            os<<"#"<<(*el).get_id();
+            el++;
+            while(el != (*it).cend()){
+                os<<", #"<<(*el).get_id();
+                el++;
+            }
+        }
+        os<<"\n";
+        os<<"  SBuffer: ";
+        if ((*it).get_sending_buffer() == false){
+            os<<"(empty)";
+        }
+        else
+        {
+            os<<"#"<<(*(*it).get_sending_buffer()).get_id();
+        }
+        os<<"\n";
+    }
+    os<<"\n";
+
+    os<<"== STOREHOUSES ==\n\n";
+    for (auto it = f.storehouse_cbegin(); it != f.storehouse_cend(); it++){
+        os<<"STOREHOUSE #"<<(*it).get_id()<<"\n";
+        os<<"  Stock: ";
+        auto el = (*it).cbegin();
+        if(el == (*it).cend()){
+            os<<"(empty)"
+        }
+        else
+        {
+            os<<"#"<<(*el).get_id();
+            el++;
+            while(el != (*it).cend()){
+                os<<", #"<<(*el).get_id();
+                el++;
+            }
+        }
+        os<<"\n";
     }
 }
