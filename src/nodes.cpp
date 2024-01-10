@@ -6,18 +6,16 @@
 #include "nodes.hpp"
 
 void Worker::do_work(Time t) {
-    if (pst_ == 0){
-        if (!q_->empty()){
-            pst_ = t;
-            pbufor_.emplace(q_->pop());
-        } else {
-            return;
-        }
+    if (!pbufor_ && !q_->empty()) {
+        pbufor_.emplace(q_->pop());
+        pst_ = t;
     }
-    if (t - (pst_ + pd_ - 1) == 0){ // jesli praca skonczona
-        push_package(std::move(pbufor_.value()));
+    if (t - pd_ == pst_ - 1) {
+        push_package(Package(pbufor_.value().get_id()));
         pbufor_.reset();
-        pst_ = 0;
+        if (!q_->empty()) {
+            pbufor_.emplace(q_->pop());
+        }
     }
 }
 
@@ -33,10 +31,16 @@ void PackageSender::send_package() {
         bufor_.reset();
     }
 }
-
 void Ramp::deliver_goods(Time t) {
-    if (t % di_ == 1) {
+    if (!bufor_) {
         push_package(Package());
+        bufor_.emplace(id_);
+        t_ = t;
+    }
+    else {
+        if (t - di_ == t_){
+            push_package(Package());
+        }
     }
 }
 
